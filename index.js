@@ -5,6 +5,7 @@ const jwt = require("jsonwebtoken");
 const studentsRouter = require("./routes/students");
 const teachersRouter = require("./routes/teachers");
 const STUDENTS = require("./mock/students");
+const { connectToDB } = require("./utils/connectToDB");
 
 const app = express(); // create express app
 const port = 3001;
@@ -49,4 +50,5 @@ app.post("/login", (req, res) => {
 
 app.listen(port, () => {
   console.log(`Listenning on port ${port}`); // listen on port
+  connectToDB();
 });
