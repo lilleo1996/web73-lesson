@@ -1,45 +1,17 @@
 const express = require("express"); // import - external
-const jwt = require("jsonwebtoken");
 const { ObjectId } = require("mongodb");
 
 const { db } = require("../utils/connectToDB");
-
-const STUDENTS = require("../mock/students"); // import - internal
+const studentsController = require("../controllers/studentsController");
+const verifyAuth = require("../middlewares/verifyAuth");
 
 const studentsRouter = express.Router();
 
-const verifyAuth = (req, res, next) => {
-  try {
-    const token = req.headers.authorization.split(" ")[1];
-    const decoded = jwt.verify(token, "WEB73-LESSON");
-    if (decoded) {
-      next();
-    }
-  } catch (err) {
-    res.send("Invalid token");
-  }
-};
-
 // GET all
-studentsRouter.get("/", verifyAuth, async (req, res) => {
-  const students = await db.students.find({}).toArray();
-  res.json({
-    message: "Get successfully",
-    data: students,
-  });
-});
+studentsRouter.get("/", verifyAuth, studentsController.getStudents);
 
 // GET with id
-studentsRouter.get("/:id", async (req, res) => {
-  const id = req.params.id;
-  const student = await db.students.findOne({
-    _id: new ObjectId(id),
-  });
-  res.json({
-    message: "Get successfully",
-    data: student,
-  });
-});
+studentsRouter.get("/:id", studentsController.getStudentById);
 
 // POST new
 studentsRouter.post("/", async (req, res) => {
