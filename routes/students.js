@@ -1,88 +1,65 @@
 const express = require("express"); // import - external
-const jwt = require("jsonwebtoken");
+const { ObjectId } = require("mongodb");
 
-const STUDENTS = require("../mock/students"); // import - internal
+const { db } = require("../utils/connectToDB");
+const studentsController = require("../controllers/studentsController");
+const verifyAuth = require("../middlewares/verifyAuth");
 
 const studentsRouter = express.Router();
 
-const verifyAuth = (req, res, next) => {
-  try {
-    const token = req.headers.authorization.split(" ")[1];
-    const decoded = jwt.verify(token, "WEB73-LESSON");
-    if (decoded) {
-      next();
-    }
-  } catch (err) {
-    res.send("Invalid token");
-  }
-};
-
 // GET all
-studentsRouter.get("/", verifyAuth, (req, res) => {
-  res.json(STUDENTS);
-});
+studentsRouter.get("/", verifyAuth, studentsController.getStudents);
 
 // GET with id
-studentsRouter.get("/:id", (req, res) => {
-  const student = STUDENTS.find((student) => student.id == req.params.id);
-
-  if (!student)
-    res.json({
-      message: "Fail",
-      data: null,
-    });
-  else
-    res.json({
-      message: "Success",
-      data: student,
-    });
-});
+studentsRouter.get("/:id", studentsController.getStudentById);
 
 // POST new
-studentsRouter.post("/", (req, res) => {
+studentsRouter.post("/", async (req, res) => {
   const { name, age } = req.body;
-  const student = {
-    id: STUDENTS.length + 1,
-    name,
-    age,
+  const newStudent = {
+    name: name,
+    age: age,
+    type: "student",
   };
-
-  STUDENTS.push(student);
+  await db.students.insertOne(newStudent);
   res.json({
-    message: "Success",
-    data: STUDENTS,
+    message: "Create successfully",
+    data: newStudent,
   });
 });
 
 // PUT with id
-studentsRouter.put("/:id", (req, res) => {
-  STUDENTS.forEach((student, index) => {
-    if (student.id == req.params.id) {
-      STUDENTS[index] = { ...STUDENTS[index], ...req.body };
+studentsRouter.put("/:id", async (req, res) => {
+  const id = req.params.id;
+  const { name, age, type } = req.body;
+  await db.students.updateOne(
+    {
+      _id: new ObjectId(id),
+    },
+    {
+      $set: {
+        name: name,
+        age: age,
+        type: type,
+      },
     }
-  });
+  );
   res.json({
-    message: "Success",
-    data: STUDENTS,
+    message: "Update successfully",
+    data: { ...req.body, _id: id },
   });
 });
 
 // DELETE with id
-studentsRouter.delete("/:id", (req, res) => {
-  const studentIndex = STUDENTS.findIndex(
-    (student) => student.id == req.params.id
-  );
-
-  if (studentIndex === -1) {
-    res.json({
-      message: "Resource is not exist",
-    });
-  } else {
-    STUDENTS.splice(studentIndex, 1);
-    res.json({
-      message: "Delete successfully",
-    });
-  }
+studentsRouter.delete("/:id", async (req, res) => {
+  const id = req.params.id;
+  await db.students.deleteOne({
+    _id: new ObjectId(id),
+  });
+  res.json({
+    message: "Delete successfully",
+    data: { _id: id },
+  });
 });
 
 module.exports = studentsRouter;
