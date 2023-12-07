@@ -7,7 +7,7 @@ const getStudents = async (req, res) => {
     .find({ $or: [{ age: { $lte: 18 } }, { age: { $gt: 20 } }] })
     .sort({ age: -1 })
     .toArray();
-  res.json({
+  res.status(200).json({
     message: "Get successfully",
     data: students,
   });
@@ -18,7 +18,7 @@ const getStudentById = async (req, res) => {
   const student = await db.students.findOne({
     _id: new ObjectId(id),
   });
-  res.json({
+  res.status(200).json({
     message: "Get successfully",
     data: student,
   });
@@ -32,7 +32,7 @@ const createStudent = async (req, res) => {
     type: "student",
   };
   await db.students.insertOne(newStudent);
-  res.json({
+  res.status(201).json({
     message: "Create successfully",
     data: newStudent,
   });
@@ -53,7 +53,7 @@ const updateStudent = async (req, res) => {
       },
     }
   );
-  res.json({
+  res.status(200).json({
     message: "Update successfully",
     data: { ...req.body, _id: id },
   });
@@ -64,7 +64,7 @@ const deleteStudent = async (req, res) => {
   await db.students.deleteOne({
     _id: new ObjectId(id),
   });
-  res.json({
+  res.status(200).json({
     message: "Delete successfully",
     data: { _id: id },
   });
