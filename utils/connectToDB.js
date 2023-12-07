@@ -1,11 +1,12 @@
 const { MongoClient } = require("mongodb");
 
 // Connect MongoDB URL
-const mongoDBUrl = "mongodb://localhost:27017";
+// const mongoDBUrl = "mongodb://localhost:27017";
+const mongoDBUrl = "mongodb+srv://user1:user1@cluster0.o8okbmq.mongodb.net/";
 const client = new MongoClient(mongoDBUrl);
 
 // Database Name
-const dbName = "web73-lesson";
+const dbName = "web73_preparation";
 const db = {};
 
 const connectToDB = async () => {
