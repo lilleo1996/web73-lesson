@@ -1,8 +1,7 @@
 const { MongoClient } = require("mongodb");
 
 // Connect MongoDB URL
-// const mongoDBUrl = "mongodb://localhost:27017";
-const mongoDBUrl = process.env.mongoDBUrl;
+const mongoDBUrl = "mongodb://localhost:27017";
 const client = new MongoClient(mongoDBUrl);
 
 // Database Name
