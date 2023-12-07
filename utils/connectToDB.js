@@ -5,7 +5,7 @@ const mongoDBUrl = "mongodb://localhost:27017";
 const client = new MongoClient(mongoDBUrl);
 
 // Database Name
-const dbName = "web73-lesson";
+const dbName = "web73_preparation";
 const db = {};
 
 const connectToDB = async () => {
