@@ -9,7 +9,7 @@ const logRequestTime = require("./middlewares/logRequestTime");
 const authRouter = require("./routes/auth");
 
 const app = express(); // create express app
-const port = 8080;
+const port = process.env.port;
 
 app.use(bodyParser.json());
 app.use(logRequestTime);
